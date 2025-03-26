@@ -28,9 +28,9 @@ public class ReqresTests {
                 .log().body()
                 .body(userBody)
                 .contentType(JSON)
-        .when()
+                .when()
                 .post(URL + "/api/users")
-        .then()
+                .then()
                 .log().status()
                 .log().body()
                 .statusCode(201)
@@ -54,9 +54,9 @@ public class ReqresTests {
                 .log().body()
                 .body(loginBody)
                 .contentType(JSON)
-        .when()
+                .when()
                 .post(URL + "/api/login")
-        .then()
+                .then()
                 .log().status()
                 .log().body()
                 .statusCode(200)
@@ -79,9 +79,9 @@ public class ReqresTests {
                 .log().body()
                 .body(loginBody)
                 .contentType(JSON)
-        .when()
+                .when()
                 .post(URL + "/api/login")
-        .then()
+                .then()
                 .log().status()
                 .log().body()
                 .statusCode(400)
@@ -104,9 +104,9 @@ public class ReqresTests {
                 .log().body()
                 .body(loginBody)
                 .contentType(JSON)
-        .when()
+                .when()
                 .post(URL + "/api/register")
-        .then()
+                .then()
                 .log().status()
                 .log().body()
                 .statusCode(400)
@@ -121,12 +121,82 @@ public class ReqresTests {
                 .log().uri()
                 .log().method()
                 .pathParam("userId", 2)
-        .when()
+                .when()
                 .delete(URL + "/api/{userId}")
-        .then()
+                .then()
                 .log().status()
                 .log().body()
                 .statusCode(204);
+    }
+
+
+    @Test
+    @DisplayName("Поиск пользователя")
+    void searchUserTest() {
+
+        given()
+                .log().uri()
+                .log().method()
+                .pathParam("userId", 2)
+                .when()
+                .get(URL + "/api/unknown/{userId}")
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(200)
+                .body("data.id", notNullValue());
+    }
+
+    @Test
+    @DisplayName("Обновление данных пользователя")
+    void updateUserTest() {
+
+        String userBody = """
+                {
+                    "name": "morpheus",
+                    "job": "zion resident"
+                }
+                """;
+
+        given()
+                .log().uri()
+                .log().method()
+                .pathParam("userId", 2)
+                .body(userBody)
+                .contentType(JSON)
+                .when()
+                .put(URL + "/api/users/{userId}")
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(200)
+                .body("job", is("zion resident"));
+    }
+
+    @Test
+    @DisplayName("Обновление данных пользователя")
+    void updatePatchUserTest() {
+
+        String userBody = """
+                {
+                    "name": "morpheus",
+                    "job": "zion resident"
+                }
+                """;
+
+        given()
+                .log().uri()
+                .log().method()
+                .pathParam("userId", 2)
+                .body(userBody)
+                .contentType(JSON)
+                .when()
+                .patch(URL + "/api/users/{userId}")
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(200)
+                .body("updatedAt", notNullValue());
     }
 
 }
